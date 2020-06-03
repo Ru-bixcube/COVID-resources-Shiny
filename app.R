@@ -20,9 +20,8 @@ outputDirBckup <- "COVID-CatalogShiny/responsesBackup"
 ######################drop################################################################
 # Define global #
 ######################################################################################
-fieldsMandatory <- c("email", "dataset_submit", "country_submit", "subjects_submit", 
-                        "disease_submit", "phenoVars_submit", "phenoType_submit", 
-                        "sample_submit", "molecularType_submit", "consent_submit", "accession_submit")
+fieldsMandatory <- c("email_submit", "resource_name_submit", "resource_url_submit",
+                     "resource_description_submit", "resource_nih_funded_submit")
 
 labelMandatory <- function(label) {
   tagList(
@@ -36,16 +35,15 @@ appCSS <- ".mandatory_star { color: red; }
    #error { color: red; }"
 
 formCSS <- ".notbold{
-    font-weight:normal  
+    font-weight:normal
 }"
 
-fieldsAll <-  c("email", "dataset_submit", "country_submit", "phenoType_submit", "design_submit",  "disease_submit", 
-                "subjects_submit", "sample_submit", "molecularType_submit","markerset_submit","age_submit",
-                "ancestry_submit", "consent_submit", "phenoVars_submit", "pubmed_submit", 
-                   "accession_submit", "linkClinicalGenomic_submit", "linkGenomic_submit","notes_submit")
+fieldsAll <-  c("email_submit", "resource_name_submit", "resource_url_submit",
+                "resources_description_submit", "resource_data_type_submit",
+                "resource_nih_funded_submit", "notes_submit")
 
-responsesDir <- file.path("COVID-CatalogShiny/responses")
-responesesBackup <- file.path("COVID-CatalogShiny/responsesBackup")
+responsesDir <- file.path("COVID-resources-Shiny/responses")
+responesesBackup <- file.path("COVID-resources-Shiny/responsesBackup")
 epochTime <- function() {
   as.integer(Sys.time())
 }
@@ -99,39 +97,13 @@ ui <- fluidPage(
               p("Submit a new dataset"),
               div(
                 id = "form",
-                column(3, textInput("email", labelMandatory(HTML("<b>Contributor e-mail</b>  <br/>  <span class='notbold'>(e.g., myemail@...)</span>")), "")),
-                column(3, textInput("dataset_submit", labelMandatory(HTML("Data Set Name  <br/>  <span class='notbold'>(e.g., UK Biobank)</span>")), "")),
-                column(3, textInput("country_submit", labelMandatory(HTML("Country  <br/>  <span class='notbold'>(e.g., UK)</span>")), "")),
-                column(3, textInput("disease_submit", labelMandatory(HTML("Disease/Focus <br/>  <span class='notbold'>(e.g, general, cancer)</span>")), "")), 
-                
-                br(),
-                
-                column(3, textInput("subjects_submit", labelMandatory(HTML("Subjects with Genomic and Clinical Data <br/>  <span class='notbold'>(numeric value no commas, e.g., 1000)</span>")), "")),
-                column(3, textInput("phenoVars_submit", labelMandatory(HTML("Number Of Phenotypic Variables Per Patient <br/>  <span class='notbold'>(numeric value without commas, e.g., 1000)</span>")), "")), 
-                column(3, textInput("phenoType_submit", labelMandatory(HTML("Phenotypic Data Type <br/>  <span class='notbold'>(e.g., EHR, questionnaires)</span>")), "")),
-                column(3, textInput("sample_submit", labelMandatory(HTML("Sample Size <br/>  <span class='notbold'>(numeric value without commas,e.g., 1000)</span>")))), 
-                
-                br(),
-                
-                column(3, textInput("molecularType_submit", labelMandatory(HTML("Molecular Data Type <br/>  <span class='notbold'> (e.g., WGS, whole genome sequencing)</span>")))), 
-                column(3,  textInput("consent_submit", labelMandatory(HTML("Consent groups present in the data set <br/>  <span class='notbold'> (e.g., biomedical research)</span>")))), 
-                column(3,  textInput("accession_submit", labelMandatory(HTML("Accession Link to the dataset/webpage <br/>  <span class='notbold'>(e.g., https://dbgap.ncbi.nlm.nih.gov)</span>")))), 
-                column(3, textInput("design_submit", HTML("Study Design <br/>  <span class='notbold'> (e.g., Case Control Study, Prospective Study)</span>"), "")), 
-                
-                br(),
-                
-                column(3, textInput("age_submit", HTML("Patients Age (yrs) <br/> <span class='notbold'> (numeric range, e.g., 40-59, >18)</span>"), "")), 
-                column(3, textInput("ancestry_submit", HTML("Ancestry <br/>  <span class='notbold'>(e.g., european(XX) or european(XX%)...)</span>"), "")), 
-                column(3, textInput("pubmed_submit", HTML("PubMedID to study infrastructure publication <br/>  <span class='notbold'>(e.g., 25826379)</span>"), "")), 
-                column(3, textInput("linkClinicalGenomic_submit", HTML("Link to clinical/genomic study <br/>  <span class='notbold'>(e.g., https://www.ukbiobank.ac.uk/)</span>"), "")), 
-                column(3, textInput("linkGenomic_submit", HTML("Link to genomic study if different then clinical one <br/>  <span class='notbold'>(e.g., https://www.ukbiobank.ac.uk/)</span>"), "")), 
-
-                br(),
-                
-                column(3, textInput("markerset_submit", HTML("Genomic Markerset <br/>  <span class='notbold'>(genotyping microarrays or on a technology basis; e.g, grc37, grc38)</span>", ""))), 
-                column(3, textInput("notes_submit", HTML("Notes <br/> <span class='notbold'> (additional information)</span>", ""))), 
-                
-                br(), 
+                textInput("email_submit", labelMandatory(HTML("<b>Contributor e-mail</b>  <br/>  <span class='notbold'>(e.g., myemail@...)</span>")), ""),
+                textInput("resource_name_submit", labelMandatory(HTML("<b>Resource name</b>  <br/>  <span class='notbold'>(e.g., ClinicalTrials.gov COVID-19 related studies)</span>")), ""),
+                textInput("resource_url_submit", labelMandatory(HTML("<b>Resource URL</b>  <br/>  <span class='notbold'>(e.g., https://clinicaltrials.gov/ct2/results?cond=COVID-19)</span>")), ""),
+                textInput("resource_description_submit", labelMandatory(HTML("<b>Resource description</b>  <br/>  <span class='notbold'>(e.g., NLM curated literature hub for COVID-19)</span>")), ""),
+                textInput("resource_data_type_submit", HTML("<b>Resource data type (if dataset)</b>  <br/>  <span class='notbold'>(e.g., case studies, dashboards and visualization tools)</span>"), ""),
+                textInput("resource_nih_funded_submit", labelMandatory(HTML("<b>NIH Funded?</b>  <br/>  <span class='notbold'>(yes/no)</span>")), ""),
+                textInput("notes_submit", HTML("<b>Additional notes</b>  <br/>  <span class='notbold'>(additional information)</span>"), ""),
                 
                 actionButton("submit", "Submit", class = "btn-primary")
                 
@@ -174,7 +146,7 @@ ui <- fluidPage(
                    br(),
                    width = 12
                    ),
-                 mainPanel(img(src = 'logo.png', align = "center", height="30px")), 
+                 mainPanel(img(src = 'logo.png', align = "center", height="30px"))
                  
                ))
     ), 
