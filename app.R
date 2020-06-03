@@ -71,7 +71,7 @@ ui <- fluidPage(
     theme = shinythemes::shinytheme("cosmo"),
     ##first the table
     tabPanel( value="catalog",
-              p("GenoPheno Catalog"),
+              p("COVID Informatics Resources Catalog"),
               
               sidebarLayout(
                 # Sidebar panel for inputs ----
@@ -130,17 +130,17 @@ ui <- fluidPage(
                #column ( 6,
                sidebarLayout(
                  sidebarPanel(
-                   tags$p(HTML("The Shiny App of this on-line catalog is automatically generated based on  the CSV file <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a> available at the GitHub repo: <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny', target='_blank'>GenoPheno-CatalogShiny</a>" )),
+                   tags$p(HTML("The Shiny App of this on-line catalog is automatically generated based on  the CSV file <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a> available at the GitHub repo: <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny', target='_blank'>COVID-resources-Shiny</a>" )),
                    tags$p(HTML( "To propose any correction, please:")),
                    p(
                      HTML("<ol>
-                                <li>Fork the GitHub repo <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny', target='_blank'>GenoPheno-CatalogShiny</a></li>
-                                <li>Propose the changes in the CSV file <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a></li>
+                                <li>Fork the GitHub repo <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny', target='_blank'>COVID-resources-Shiny</a></li>
+                                <li>Propose the changes in the CSV file <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a></li>
                                 <li>Submit a pull request</li>
                                 </ol>")
                     ),
                    br(),
-                   h3( "Thank you for your contribution to update and improve the GenoPheno Catalog!" ),
+                   h3( "Thank you for your contribution to update and improve the COVID Informatics Resources Catalog!" ),
                    br(),
                    tags$p(HTML( "Your proposed changes will be reivewed in the following days")),
                    br(),
@@ -156,7 +156,7 @@ ui <- fluidPage(
                #column ( 6,
                sidebarLayout(
                  sidebarPanel(
-                   h3( "Welcome to the GenoPheno Catalog Shiny App!" ),
+                   h3( "Welcome to the COVID Informatics Resources Catalog Shiny App!" ),
                    br(),
                    tags$p(HTML( "The objective of this Shiny App is to provide a dynamic online dataset catalog. We welcome the community to correct and complete it." ) ),
                    tags$h5(HTML("<u>Inclusion Criteria</u>")),
@@ -178,7 +178,7 @@ ui <- fluidPage(
                    br(),
                    tags$h5(HTML("<u>All five criteria must be meet</u>")),
                    
-                   tags$p(HTML( "The GenoPheno catalog contains:
+                   tags$p(HTML( "The COVID Informatics Resources Catalog contains:
                                         <li>Dataset name (long name and acronym if any)</li>
                                         <li>Country (where does the research take place)</li>
                                         <li>Subject count with both genomic and clinical data</li>
@@ -198,7 +198,6 @@ ui <- fluidPage(
                                         <li>Pubmed identifier number to key study infrastructure publication</li>" ) ),
                    br(),
                    
-                   tags$p(HTML("For further details see the <a href=\"\">manuscript</a>.")),
                    width = 12
                  ),
                  mainPanel(img(src = 'logo.png', align = "center", height="30px")), 
@@ -217,18 +216,18 @@ server <- function(input, output, session) {
   
   attr(input, "readonly") <- FALSE
   dataValues <- reactiveValues()
-  biobanks <- read.delim( "https://raw.githubusercontent.com/hms-dbmi/GenoPheno-CatalogShiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+  biobanks <- read.delim( "https://raw.githubusercontent.com/Ru-bixcube/COVID-resources-Shiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
 
   observeEvent(input$confirm0, {
     
     
     if( input$dataset == ""){
-      biobanks <- read.delim( "https://raw.githubusercontent.com/hms-dbmi/GenoPheno-CatalogShiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+      biobanks <- read.delim( "https://raw.githubusercontent.com/Ru-bixcube/COVID-resources-Shiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
 
       updateTabsetPanel(session, "main_panel",
                         selected = "catalog")
     }else{
-      biobanks <- read.delim( "https://raw.githubusercontent.com/hms-dbmi/GenoPheno-CatalogShiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+      biobanks <- read.delim( "https://raw.githubusercontent.com/Ru-bixcube/COVID-resources-Shiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
 
       updateTabsetPanel(session, "main_panel",
                         selected = "catalog")
