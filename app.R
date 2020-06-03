@@ -8,9 +8,14 @@ library(shinyalert)
 library(shinyBS)
 library(DT)
 
-token <- readRDS("droptoken.rds")
+# Uncomment to create and save dropbox token
+# token <- drop_auth()
+# saveRDS(token, "dropbox-token.rds")
+
+token <- readRDS("dropbox-token.rds")
 drop_acc(dtoken = token)
-outputDir <- "responses"
+outputDir <- "COVID-CatalogShiny/responses"
+outputDirBckup <- "COVID-CatalogShiny/responsesBackup"
 
 ######################drop################################################################
 # Define global #
@@ -39,16 +44,11 @@ fieldsAll <-  c("email", "dataset_submit", "country_submit", "phenoType_submit",
                 "ancestry_submit", "consent_submit", "phenoVars_submit", "pubmed_submit", 
                    "accession_submit", "linkClinicalGenomic_submit", "linkGenomic_submit","notes_submit")
 
-responsesDir <- file.path("responses")
-responesesBackup <- file.path("responsesBackup")
+responsesDir <- file.path("COVID-CatalogShiny/responses")
+responesesBackup <- file.path("COVID-CatalogShiny/responsesBackup")
 epochTime <- function() {
   as.integer(Sys.time())
 }
-
-
-##Remotely saved in dropbox
-outputDir <- "responses"
-outputDirBckup <- "responsesBackup"
 
 
 ######################################################################################
@@ -56,8 +56,6 @@ outputDirBckup <- "responsesBackup"
 ######################################################################################
 
 ui <- fluidPage(
-
-  tags$head(includeHTML(("google-analytics.html"))),
   shinyjs::useShinyjs(), 
   shinyjs::inlineCSS(appCSS), 
   shinyjs::inlineCSS(formCSS), 
@@ -402,9 +400,6 @@ for (var i = 0; i < tips.length; i++) {
     dataSubmission <- t(dataSubmission)
     dataSubmission
   })
-  
-  outputDir <- "responses"
-  outputDirBckup <- "responsesBackup"
 
   saveData <- function(dataSubmission) {
     dataSubmission <- t(dataSubmission)
