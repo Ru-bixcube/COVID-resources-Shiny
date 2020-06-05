@@ -72,7 +72,7 @@ ui <- fluidPage(
     theme = shinythemes::shinytheme("cosmo"),
     ##first the table
     tabPanel( value="catalog",
-              p("COVID Informatics Resources Catalog"),
+              p("COVID Informatics Catalog"),
               
               sidebarLayout(
                 # Sidebar panel for inputs ----
@@ -136,13 +136,13 @@ ui <- fluidPage(
                                 </ol>")
                     ),
                    br(),
-                   h3( "Thank you for your contribution to update and improve the COVID Informatics Resources Catalog!" ),
+                   h3( "Thank you for your contribution to update and improve the COVID Informatics Catalog!" ),
                    br(),
                    tags$p(HTML( "Your proposed changes will be reivewed in the following days")),
                    br(),
                    width = 12
                    ),
-                 mainPanel(img(src = 'logo.png', align = "center", height="30px"))
+                 mainPanel()
                  
                ))
     ), 
@@ -152,7 +152,7 @@ ui <- fluidPage(
                #column ( 6,
                sidebarLayout(
                  sidebarPanel(
-                   h3( "Welcome to the COVID Informatics Resources Catalog Shiny App!" ),
+                   h3( "Welcome to the COVID Informatics Catalog Shiny App!" ),
                    br(),
                    tags$p(HTML( "The objective of this Shiny App is to provide a dynamic online dataset catalog. We welcome the community to correct and complete it." ) ),
                    tags$h5(HTML("<u>Inclusion Criteria</u>")),
@@ -174,7 +174,7 @@ ui <- fluidPage(
                    br(),
                    tags$h5(HTML("<u>All five criteria must be meet</u>")),
                    
-                   tags$p(HTML( "The COVID Informatics Resources Catalog contains:
+                   tags$p(HTML( "The COVID Informatics Catalog contains:
                                         <li>Dataset name (long name and acronym if any)</li>
                                         <li>Country (where does the research take place)</li>
                                         <li>Subject count with both genomic and clinical data</li>
@@ -196,7 +196,7 @@ ui <- fluidPage(
                    
                    width = 12
                  ),
-                 mainPanel(img(src = 'logo.png', align = "center", height="30px")), 
+                 mainPanel()
                  
                  # )
                ))
