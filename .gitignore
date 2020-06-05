@@ -1,3 +1,5 @@
 dropbox-token.rds
 .httr-oauth
 .Rhistory
+.RData
+rsconnect
