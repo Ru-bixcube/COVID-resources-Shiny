@@ -8,16 +8,21 @@ library(shinyalert)
 library(shinyBS)
 library(DT)
 
-token <- readRDS("droptoken.rds")
+# Uncomment to create and save dropbox token
+# token <- drop_auth()
+# saveRDS(token, "dropbox-token.rds")
+
+token <- readRDS("dropbox-token.rds")
 drop_acc(dtoken = token)
-outputDir <- "responses"
+outputDir <- "COVID-CatalogShiny/responses"
+outputDirBckup <- "COVID-CatalogShiny/responsesBackup"
+resourceTypes <- c("Data resource", "Computational resource", "Supporting resource")
 
 ######################drop################################################################
 # Define global #
 ######################################################################################
-fieldsMandatory <- c("email", "dataset_submit", "country_submit", "subjects_submit", 
-                        "disease_submit", "phenoVars_submit", "phenoType_submit", 
-                        "sample_submit", "molecularType_submit", "consent_submit", "accession_submit")
+fieldsMandatory <- c("email_submit", "resource_name_submit", "resource_url_submit",
+                     "resource_description_submit", "resource_nih_funded_submit")
 
 labelMandatory <- function(label) {
   tagList(
@@ -31,24 +36,18 @@ appCSS <- ".mandatory_star { color: red; }
    #error { color: red; }"
 
 formCSS <- ".notbold{
-    font-weight:normal  
+    font-weight:normal
 }"
 
-fieldsAll <-  c("email", "dataset_submit", "country_submit", "phenoType_submit", "design_submit",  "disease_submit", 
-                "subjects_submit", "sample_submit", "molecularType_submit","markerset_submit","age_submit",
-                "ancestry_submit", "consent_submit", "phenoVars_submit", "pubmed_submit", 
-                   "accession_submit", "linkClinicalGenomic_submit", "linkGenomic_submit","notes_submit")
+fieldsAll <-  c("email_submit", "resource_name_submit", "resource_url_submit",
+                "resources_description_submit", "resource_data_type_submit",
+                "resource_nih_funded_submit", "notes_submit")
 
-responsesDir <- file.path("responses")
-responesesBackup <- file.path("responsesBackup")
+responsesDir <- file.path("COVID-resources-Shiny/responses")
+responesesBackup <- file.path("COVID-resources-Shiny/responsesBackup")
 epochTime <- function() {
   as.integer(Sys.time())
 }
-
-
-##Remotely saved in dropbox
-outputDir <- "responses"
-outputDirBckup <- "responsesBackup"
 
 
 ######################################################################################
@@ -56,8 +55,6 @@ outputDirBckup <- "responsesBackup"
 ######################################################################################
 
 ui <- fluidPage(
-
-  tags$head(includeHTML(("google-analytics.html"))),
   shinyjs::useShinyjs(), 
   shinyjs::inlineCSS(appCSS), 
   shinyjs::inlineCSS(formCSS), 
@@ -75,20 +72,14 @@ ui <- fluidPage(
     theme = shinythemes::shinytheme("cosmo"),
     ##first the table
     tabPanel( value="catalog",
-              p("GenoPheno Catalog"),
+              p("COVID Informatics Catalog"),
               
               sidebarLayout(
                 # Sidebar panel for inputs ----
                 wellPanel(
                   fluidRow(
                     column( 3, 
-                            uiOutput("countryValue")),
-                    column( 3, 
-                            uiOutput("radioButtonsDiseaseType")),
-                    column( 3, 
-                            uiOutput("radioButtonsGenomicType")),
-                    column( 3,
-                            uiOutput("patientValue"))
+                            uiOutput("countryValue"))
                   
                 ))
                 ,
@@ -101,39 +92,14 @@ ui <- fluidPage(
               p("Submit a new dataset"),
               div(
                 id = "form",
-                column(3, textInput("email", labelMandatory(HTML("<b>Contributor e-mail</b>  <br/>  <span class='notbold'>(e.g., myemail@...)</span>")), "")),
-                column(3, textInput("dataset_submit", labelMandatory(HTML("Data Set Name  <br/>  <span class='notbold'>(e.g., UK Biobank)</span>")), "")),
-                column(3, textInput("country_submit", labelMandatory(HTML("Country  <br/>  <span class='notbold'>(e.g., UK)</span>")), "")),
-                column(3, textInput("disease_submit", labelMandatory(HTML("Disease/Focus <br/>  <span class='notbold'>(e.g, general, cancer)</span>")), "")), 
-                
-                br(),
-                
-                column(3, textInput("subjects_submit", labelMandatory(HTML("Subjects with Genomic and Clinical Data <br/>  <span class='notbold'>(numeric value no commas, e.g., 1000)</span>")), "")),
-                column(3, textInput("phenoVars_submit", labelMandatory(HTML("Number Of Phenotypic Variables Per Patient <br/>  <span class='notbold'>(numeric value without commas, e.g., 1000)</span>")), "")), 
-                column(3, textInput("phenoType_submit", labelMandatory(HTML("Phenotypic Data Type <br/>  <span class='notbold'>(e.g., EHR, questionnaires)</span>")), "")),
-                column(3, textInput("sample_submit", labelMandatory(HTML("Sample Size <br/>  <span class='notbold'>(numeric value without commas,e.g., 1000)</span>")))), 
-                
-                br(),
-                
-                column(3, textInput("molecularType_submit", labelMandatory(HTML("Molecular Data Type <br/>  <span class='notbold'> (e.g., WGS, whole genome sequencing)</span>")))), 
-                column(3,  textInput("consent_submit", labelMandatory(HTML("Consent groups present in the data set <br/>  <span class='notbold'> (e.g., biomedical research)</span>")))), 
-                column(3,  textInput("accession_submit", labelMandatory(HTML("Accession Link to the dataset/webpage <br/>  <span class='notbold'>(e.g., https://dbgap.ncbi.nlm.nih.gov)</span>")))), 
-                column(3, textInput("design_submit", HTML("Study Design <br/>  <span class='notbold'> (e.g., Case Control Study, Prospective Study)</span>"), "")), 
-                
-                br(),
-                
-                column(3, textInput("age_submit", HTML("Patients Age (yrs) <br/> <span class='notbold'> (numeric range, e.g., 40-59, >18)</span>"), "")), 
-                column(3, textInput("ancestry_submit", HTML("Ancestry <br/>  <span class='notbold'>(e.g., european(XX) or european(XX%)...)</span>"), "")), 
-                column(3, textInput("pubmed_submit", HTML("PubMedID to study infrastructure publication <br/>  <span class='notbold'>(e.g., 25826379)</span>"), "")), 
-                column(3, textInput("linkClinicalGenomic_submit", HTML("Link to clinical/genomic study <br/>  <span class='notbold'>(e.g., https://www.ukbiobank.ac.uk/)</span>"), "")), 
-                column(3, textInput("linkGenomic_submit", HTML("Link to genomic study if different then clinical one <br/>  <span class='notbold'>(e.g., https://www.ukbiobank.ac.uk/)</span>"), "")), 
-
-                br(),
-                
-                column(3, textInput("markerset_submit", HTML("Genomic Markerset <br/>  <span class='notbold'>(genotyping microarrays or on a technology basis; e.g, grc37, grc38)</span>", ""))), 
-                column(3, textInput("notes_submit", HTML("Notes <br/> <span class='notbold'> (additional information)</span>", ""))), 
-                
-                br(), 
+                textInput("email_submit", labelMandatory(HTML("<b>Contributor e-mail</b>  <br/>  <span class='notbold'>(e.g., myemail@...)</span>")), ""),
+                selectInput("resource_type_submit", labelMandatory(HTML("<b>Resource type</b>")), resourceTypes),
+                textInput("resource_name_submit", labelMandatory(HTML("<b>Resource name</b>  <br/>  <span class='notbold'>(e.g., ClinicalTrials.gov COVID-19 related studies)</span>")), ""),
+                textInput("resource_url_submit", labelMandatory(HTML("<b>Resource URL</b>  <br/>  <span class='notbold'>(e.g., https://clinicaltrials.gov/ct2/results?cond=COVID-19)</span>")), ""),
+                textInput("resource_description_submit", labelMandatory(HTML("<b>Resource description</b>  <br/>  <span class='notbold'>(e.g., NLM curated literature hub for COVID-19)</span>")), ""),
+                textInput("resource_data_type_submit", HTML("<b>Resource data type (if dataset)</b>  <br/>  <span class='notbold'>(e.g., case studies, dashboards and visualization tools)</span>"), ""),
+                selectInput("resource_nih_funded_submit", labelMandatory(HTML("<b>NIH Funded?</b>")), c("No", "Yes")),
+                textInput("notes_submit", HTML("<b>Additional notes</b>  <br/>  <span class='notbold'>(additional information)</span>"), ""),
                 
                 actionButton("submit", "Submit", class = "btn-primary")
                 
@@ -160,23 +126,23 @@ ui <- fluidPage(
                #column ( 6,
                sidebarLayout(
                  sidebarPanel(
-                   tags$p(HTML("The Shiny App of this on-line catalog is automatically generated based on  the CSV file <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a> available at the GitHub repo: <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny', target='_blank'>GenoPheno-CatalogShiny</a>" )),
+                   tags$p(HTML("The Shiny App of this on-line catalog is automatically generated based on  the CSV file <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a> available at the GitHub repo: <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny', target='_blank'>COVID-resources-Shiny</a>" )),
                    tags$p(HTML( "To propose any correction, please:")),
                    p(
                      HTML("<ol>
-                                <li>Fork the GitHub repo <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny', target='_blank'>GenoPheno-CatalogShiny</a></li>
-                                <li>Propose the changes in the CSV file <a href='https://github.com/hms-dbmi/GenoPheno-CatalogShiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a></li>
+                                <li>Fork the GitHub repo <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny', target='_blank'>COVID-resources-Shiny</a></li>
+                                <li>Propose the changes in the CSV file <a href='https://github.com/Ru-bixcube/COVID-resources-Shiny/blob/master/csv/tableData.csv', target='_blank'>\"tableData.csv\"</a></li>
                                 <li>Submit a pull request</li>
                                 </ol>")
                     ),
                    br(),
-                   h3( "Thank you for your contribution to update and improve the GenoPheno Catalog!" ),
+                   h3( "Thank you for your contribution to update and improve the COVID Informatics Catalog!" ),
                    br(),
                    tags$p(HTML( "Your proposed changes will be reivewed in the following days")),
                    br(),
                    width = 12
                    ),
-                 mainPanel(img(src = 'logo.png', align = "center", height="30px")), 
+                 mainPanel()
                  
                ))
     ), 
@@ -186,7 +152,7 @@ ui <- fluidPage(
                #column ( 6,
                sidebarLayout(
                  sidebarPanel(
-                   h3( "Welcome to the GenoPheno Catalog Shiny App!" ),
+                   h3( "Welcome to the COVID Informatics Catalog Shiny App!" ),
                    br(),
                    tags$p(HTML( "The objective of this Shiny App is to provide a dynamic online dataset catalog. We welcome the community to correct and complete it." ) ),
                    tags$h5(HTML("<u>Inclusion Criteria</u>")),
@@ -208,7 +174,7 @@ ui <- fluidPage(
                    br(),
                    tags$h5(HTML("<u>All five criteria must be meet</u>")),
                    
-                   tags$p(HTML( "The GenoPheno catalog contains:
+                   tags$p(HTML( "The COVID Informatics Catalog contains:
                                         <li>Dataset name (long name and acronym if any)</li>
                                         <li>Country (where does the research take place)</li>
                                         <li>Subject count with both genomic and clinical data</li>
@@ -228,10 +194,9 @@ ui <- fluidPage(
                                         <li>Pubmed identifier number to key study infrastructure publication</li>" ) ),
                    br(),
                    
-                   tags$p(HTML("For further details see the <a href=\"\">manuscript</a>.")),
                    width = 12
                  ),
-                 mainPanel(img(src = 'logo.png', align = "center", height="30px")), 
+                 mainPanel()
                  
                  # )
                ))
@@ -247,18 +212,18 @@ server <- function(input, output, session) {
   
   attr(input, "readonly") <- FALSE
   dataValues <- reactiveValues()
-  biobanks <- read.delim( "https://raw.githubusercontent.com/hms-dbmi/GenoPheno-CatalogShiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+  biobanks <- read.delim( "./csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
 
   observeEvent(input$confirm0, {
     
     
     if( input$dataset == ""){
-      biobanks <- read.delim( "https://raw.githubusercontent.com/hms-dbmi/GenoPheno-CatalogShiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+      biobanks <- read.delim( "./csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
 
       updateTabsetPanel(session, "main_panel",
                         selected = "catalog")
     }else{
-      biobanks <- read.delim( "https://raw.githubusercontent.com/hms-dbmi/GenoPheno-CatalogShiny/master/csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+      biobanks <- read.delim( "./csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
 
       updateTabsetPanel(session, "main_panel",
                         selected = "catalog")
@@ -284,39 +249,9 @@ server <- function(input, output, session) {
   })
   
   output$countryValue <- renderUI({
-    selectInput(inputId = "studydesign", 
-                label = "Study Design:", 
-                choices =  c("All", unique(tolower(biobanks$Study.Design)))
-    )
-    
-  })
-  
-  output$patientValue <-
-    renderUI({
-      sliderInput("patientValue", "Subject count with genomic and clinical data:",
-                  min = min(biobanks$Subject, na.rm = TRUE),
-                  max = max(as.numeric(as.character(biobanks$Subject.Count)), na.rm = TRUE),
-                  value = c(min(as.numeric(as.character(biobanks$Subject.Count)), na.rm = TRUE), max = max(as.numeric(as.character(biobanks$Subject.Count)), na.rm = TRUE))
-      )
-    })
-  
-  
-  output$radioButtonsDiseaseType <- renderUI({
-    radioButtons("diseasetype", "Disease/Focus:",
-                 c("All" = "all",
-                   "General" = "general", 
-                   "Disease specific" = "specific"
-                 )
-    )
-    
-  })
-  
-  output$radioButtonsGenomicType <- renderUI({
-    radioButtons("genomictype", "Molecular Data Type:",
-                 c("All" = "all",
-                   "WGS" = "wgs", 
-                   "WES" = "wes"
-                 )
+    selectInput(inputId = "resource_type", 
+                label = "Resource Type:", 
+                choices =  c("All", resourceTypes)
     )
     
   })
@@ -324,42 +259,18 @@ server <- function(input, output, session) {
   output$mytable1 <- DT::renderDataTable(
     DT::datatable({
     data <- biobanks
-    if (input$diseasetype != "all") {
-      if (input$diseasetype == "general") {
-        data <- data[data$Disease.Focus == "General" & !is.na(data$Disease.Focus),]
-      }
-      if (input$diseasetype != "general") {
-        data <- data[data$Disease.Focus != "General"  & !is.na(data$Disease.Focus),]
-      }
-    }
-    if (input$genomictype != "all") {
-      if (input$genomictype == "wgs") {
-        data <- data[ grep( "WGS", data$Molecular.Data.Type), ]
-      }
-      if (input$genomictype == "wes") {
-        data <- data[ grep( "WES", data$Molecular.Data.Type), ]
-      }
-    }
-    if (input$studydesign != "All") {
-      data <- data[tolower(data$Study.Design) == tolower(input$studydesign),]
-    }
-    if( ! is.null(input$patientValue) ){
-      data <- data[ as.numeric(as.character(data$Subject.Count)) >= input$patientValue[1] &
-                      as.numeric(as.character(data$Subject.Count)) <= input$patientValue[2] , ]
+    if (input$resource_type != "All") {
+      data <- data[tolower(data$Resource.Type) == tolower(input$resource_type),]
     }
 
-    colnames(data) <- c("Name","Country", "Subject Count with Genomic and Clinical Data","Study Design","Disease/Focus","Number Of Phenotypic Variables Per Patient",
-                         "Phenotypic Data Type","Sample Size","Molecular Data Type","Genomic Markerset",
-                         "Patients Age (yrs)","Ancestry","Consent","Accession Link to the Dataset","Link to Clinical And Genomic Study", "Link to Genomic Study (if different than the clinical)","PubMed ID","Notes")
+    colnames(data) <- c("Name","URL","Resource Type","Description","Data Type",
+                         "NIH Funded","Notes")
     data
     
   },  filter = "top", escape = FALSE, rownames = FALSE, options = list(scrollX = TRUE, pageLength = 30), callback = JS("
-var tips = ['Dataset name (long name and acronym if any)', 'Country (where does the research take place)', 'Subject count with both genomic and clinical data',
-'Study design (e.g., cohort, prospective, longitudinal)','Disease/Focus (e.g., general or disease specific)','Number Of Phenotypic Variables Per Patient',
-'Phenotypic data type (e.g., electronic health records -EHR-, questionnaires, clinical notes)',
-'Sample size (total number of genomic samples [e.g., # of WGS samples + # of WES samples])','Molecular data type (e.g., SNP array, whole genome sequencing data -WGS -, whole exome sequencing data -WES- )','Genomic Markerset (e.g., genotyping microarrays or on a technology basis)',
-'Patients Age in years','Ancestry','Consent groups present in the dataset (e.g., biomedical, disease-specific)','Accession link to the dataset (link to the website or contact information to obtain data access)', 
-'Link to clinical/genomic study','Link to genomic study if different than the clinical one','Pubmed identifier number to the key study infrastructure publication/s','Notes'],
+var tips = ['Resource name (long name and acronym if any)', 'Web URL', 'Resource type (Data/Computational/Supporting)', 'About the resource',
+'E.g. genomics or clinical studies (for data resources)','Project funded by the NIH?','Additional notes',
+'Phenotypic data type (e.g., electronic health records -EHR-, questionnaires, clinical notes)'],
     header = table.columns().header();
 for (var i = 0; i < tips.length; i++) {
   $(header[i]).attr('title', tips[i]);
@@ -402,9 +313,6 @@ for (var i = 0; i < tips.length; i++) {
     dataSubmission <- t(dataSubmission)
     dataSubmission
   })
-  
-  outputDir <- "responses"
-  outputDirBckup <- "responsesBackup"
 
   saveData <- function(dataSubmission) {
     dataSubmission <- t(dataSubmission)
