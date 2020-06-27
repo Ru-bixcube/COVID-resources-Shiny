@@ -1,4 +1,10 @@
-Name,URL,Resource Type,Descrption,Data type,NIH Funded,Notes
-Amazon Web Services (AWS) data lake for analysis of COVID-19 data,https://dj2taa9i652rf.cloudfront.net/,Data resource,A centralized repository of up-to-date and curated datasets on or related to the spread and characteristics of SARS-CoV-2 and COVID-19.,"dashboards and visualization tools, epidemiology, healthcare resources, literature",No,
-Amazon Web Services (AWS) data lake for analysis of COVID-19 data,https://atrio.io/covid-19/,Computational resource,"Powered by Atrio software platform offers easy access to large numbers of freely available, high-performing GPU and CPU resources. Contact support for help creating portable application containers that are performance optimized for these powerful systems.",,No,
-Data-Against-COVID Team,https://discourse.data-against-covid.org/t/list-of-pis-supporting-this-endeavour/124,Supporting resource,"A group of more than 600 volunteer data scientists, machines learning experts, bioinformaticians and professional software developers who have joined together to offer their expertise for any data analysis problems that arise in the context of the ongoing coronavirus pandemic.",,No,
+Name,URL,Resource Type,Descrption,Notes
+Amazon Web Services (AWS) data lake for analysis of COVID-19 data,https://dj2taa9i652rf.cloudfront.net/,Databases (epidemiological),A centralized repository of up-to-date and curated datasets on or related to the spread and characteristics of SARS-CoV-2 and COVID-19.,
+Atrio,https://atrio.io/covid-19/,Computational,"Powered by Atrio software platform offers easy access to large numbers of freely available, high-performing GPU and CPU resources. Contact support for help creating portable application containers that are performance optimized for these powerful systems.",
+Data-Against-COVID Team,https://discourse.data-against-covid.org/t/list-of-pis-supporting-this-endeavour/124,Supporting,"A group of more than 600 volunteer data scientists, machines learning experts, bioinformaticians and professional software developers who have joined together to offer their expertise for any data analysis problems that arise in the context of the ongoing coronavirus pandemic.",
+COVID Safe Paths,https://covidsafepaths.org/,Contact tracing apps,,
+COVID Watch,https://covid-watch.org/,Contact tracing apps,,
+NOVID,https://www.novid.org/,Contact tracing apps,,
+TrackCOVID,https://trackcovid.net/,Contact tracing apps,,
+The COVID Tracking Project,https://covidtracking.com/,Databases (epidemiological),The COVID Tracking Project is a volunteer organization launched from The Atlantic and dedicated to collecting and publishing the data required to understand the COVID-19 outbreak in the United States.,
+Coronavirus (Covid-19) Data in the United States,https://github.com/nytimes/covid-19-data,Databases (epidemiological),,

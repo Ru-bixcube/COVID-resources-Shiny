@@ -3,3 +3,4 @@ dropbox-token.rds
 .Rhistory
 .RData
 rsconnect
+.Rproj.user

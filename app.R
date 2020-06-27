@@ -16,13 +16,24 @@ token <- readRDS("dropbox-token.rds")
 drop_acc(dtoken = token)
 outputDir <- "COVID-CatalogShiny/responses"
 outputDirBckup <- "COVID-CatalogShiny/responsesBackup"
-resourceTypes <- c("Data resource", "Computational resource", "Supporting resource")
+resourceTypes <- c(
+  "Computational",
+  "Contact tracing apps",
+  "Literature",
+  "Databases (epidemiological)",
+  "Databases (image)",
+  "Databases (sequencing)",
+  "Databases (proteomics)",
+  "Databases (clinical)",
+  "Databases (chemical structure)",
+  "Databases (other)"
+)
 
-######################drop################################################################
+######################################################################################
 # Define global #
 ######################################################################################
 fieldsMandatory <- c("email_submit", "resource_name_submit", "resource_url_submit",
-                     "resource_description_submit", "resource_nih_funded_submit")
+                     "resource_description_submit")
 
 labelMandatory <- function(label) {
   tagList(
@@ -39,9 +50,7 @@ formCSS <- ".notbold{
     font-weight:normal
 }"
 
-fieldsAll <-  c("email_submit", "resource_name_submit", "resource_url_submit",
-                "resources_description_submit", "resource_data_type_submit",
-                "resource_nih_funded_submit", "notes_submit")
+fieldsAll <-  c("email_submit", "resource_name_submit", "resource_url_submit", "resources_description_submit", "notes_submit")
 
 responsesDir <- file.path("COVID-resources-Shiny/responses")
 responesesBackup <- file.path("COVID-resources-Shiny/responsesBackup")
@@ -84,26 +93,24 @@ ui <- fluidPage(
                 ))
                 ,
                 # Main panel for displaying outputs ----
-                div(DT::dataTableOutput("mytable1", width = 1700), style = "font-size: 75%")
+                div(DT::dataTableOutput("mytable1"), style = "font-size: 75%")
                 
               )
     ), 
     tabPanel( value="submit",
-              p("Submit a new dataset"),
+              p("Submit a new resource"),
               div(
-                id = "form",
-                textInput("email_submit", labelMandatory(HTML("<b>Contributor e-mail</b>  <br/>  <span class='notbold'>(e.g., myemail@...)</span>")), ""),
-                selectInput("resource_type_submit", labelMandatory(HTML("<b>Resource type</b>")), resourceTypes),
-                textInput("resource_name_submit", labelMandatory(HTML("<b>Resource name</b>  <br/>  <span class='notbold'>(e.g., ClinicalTrials.gov COVID-19 related studies)</span>")), ""),
-                textInput("resource_url_submit", labelMandatory(HTML("<b>Resource URL</b>  <br/>  <span class='notbold'>(e.g., https://clinicaltrials.gov/ct2/results?cond=COVID-19)</span>")), ""),
-                textInput("resource_description_submit", labelMandatory(HTML("<b>Resource description</b>  <br/>  <span class='notbold'>(e.g., NLM curated literature hub for COVID-19)</span>")), ""),
-                textInput("resource_data_type_submit", HTML("<b>Resource data type (if dataset)</b>  <br/>  <span class='notbold'>(e.g., case studies, dashboards and visualization tools)</span>"), ""),
-                selectInput("resource_nih_funded_submit", labelMandatory(HTML("<b>NIH Funded?</b>")), c("No", "Yes")),
-                textInput("notes_submit", HTML("<b>Additional notes</b>  <br/>  <span class='notbold'>(additional information)</span>"), ""),
-                
-                actionButton("submit", "Submit", class = "btn-primary")
-                
+
               ),
+              fluidRow( 
+                #column ( 6,
+                sidebarLayout(
+                  sidebarPanel(
+                    tags$p(HTML("Submit your proposed resource using the <a href='https://docs.google.com/forms/d/e/1FAIpQLScTi6SP2i6bkrBJukrChRtmtt-LNfFvVTaZjSBmbnc7yxjTDQ/viewform', target='_blank'>submission form</a>. We will review your submission before adding it to the catalog." )),
+                    width = 12),
+                  mainPanel()
+                  
+                  )),
               DT::dataTableOutput("responsesTable"),
               shinyjs::hidden(
                 div(
@@ -135,11 +142,6 @@ ui <- fluidPage(
                                 <li>Submit a pull request</li>
                                 </ol>")
                     ),
-                   br(),
-                   h3( "Thank you for your contribution to update and improve the COVID Informatics Catalog!" ),
-                   br(),
-                   tags$p(HTML( "Your proposed changes will be reivewed in the following days")),
-                   br(),
                    width = 12
                    ),
                  mainPanel()
@@ -152,17 +154,15 @@ ui <- fluidPage(
                #column ( 6,
                sidebarLayout(
                  sidebarPanel(
-                   h3( "Welcome to the COVID Informatics Catalog Shiny App!" ),
+                   h3( "Welcome to the COVID Informatics Catalog!" ),
                    br(),
-                   tags$p(HTML( "The objective of this Shiny App is to provide a dynamic online dataset catalog. We welcome the community to correct and complete it." ) ),
-                   tags$h5(HTML("<u>Inclusion Criteria</u>")),
+                   tags$p(HTML( "The objective of this Shiny App is to provide a dynamic online informatics catalog for COVID-19 resources. We welcome the community to correct and complete it." ) ),
+                   br(),
+                   tags$h5(HTML("<b>Inclusion Criteria:</b>")),
                    p(
                      HTML("<ol>
-                                <li>Over five hundred (500) human subjects</li>
-                                <li>Contain both genotype and phenotype data of the same subjects</li>
-                                <li>Include Whole Genome Sequencing (WGS) or Whole Exome Sequencing (WES) data as part of their genomic data content</li>
-                                <li>Include at least one hundred (100) recorded phenotypic variables per subject</li>
-                                <li>The dataset has to be accessible through a website or via a way of collaboration with investigators</li>
+                                <li>Restricted to datasets, software, and related informatics resources relevant to the COVID-19 pandemic</li>
+                                <li>The resource must be open source and/or publicly accessible (free of charge) through a website or via a way of collaboration with investigators</li>
                                 <li>All the resources (data and website) have to be available in English</li>
                                 </ol>")
                      
@@ -171,27 +171,14 @@ ui <- fluidPage(
                      
                      
                    ),
+                   tags$h5(HTML("<u>All three criteria must be met.</u>")),
                    br(),
-                   tags$h5(HTML("<u>All five criteria must be meet</u>")),
-                   
-                   tags$p(HTML( "The COVID Informatics Catalog contains:
-                                        <li>Dataset name (long name and acronym if any)</li>
-                                        <li>Country (where does the research take place)</li>
-                                        <li>Subject count with both genomic and clinical data</li>
-                                        <li>Study design (e.g., cohort, prospective, longitudinal)</li>
-                                        <li>Number of phenotypic variables per patient</li>
-                                        <li>Phenotypic data type (e.g., electronic health records -EHR-, questionnaires, clinical notes)</li>
-                                        <li>Sample size (total number of genomic samples [e.g., # of WGS samples + # of WES samples])</li>
-                                        <li>Molecular data type (e.g., SNP array, whole genome sequencing data -WGS -, whole exome sequencing data -WES- )</li>
-                                        <li>Genomic Markerset (e.g., genotyping microarrays or on a technology basis)</li>
-                                        <li>Disease/Focus (e.g., general or disease specific)</li>
-                                        <li>Patients age in years</li>
-                                        <li>Ancestry</li>
-                                        <li>Consent groups present in the dataset (e.g., biomedical, disease-specific)</li>
-                                        <li>Accession link to the dataset (link to the website or contact information to obtain data access)</li>
-                                        <li>Link to clinical/genomic study</li>
-                                        <li>Link to genomic study if different than the clinical one</li>
-                                        <li>Pubmed identifier number to key study infrastructure publication</li>" ) ),
+                   tags$p(HTML( "<b>The COVID Informatics Catalog contains:</b>
+                                        <li>Resource name (long name and acronym if any)</li>
+                                        <li>Resource URL</li>
+                                        <li>Resource type</li>
+                                        <li>Resource description</li>
+                                        <li>Additional notes</li>" ) ),
                    br(),
                    
                    width = 12
@@ -213,6 +200,8 @@ server <- function(input, output, session) {
   attr(input, "readonly") <- FALSE
   dataValues <- reactiveValues()
   biobanks <- read.delim( "./csv/tableData.csv", nrows=-1L, sep=",", header=T, stringsAsFactors=FALSE)
+  biobanks$Name <- paste0("<a href='",  biobanks$URL, "' target='_blank'>", biobanks$Name, "</a>")
+  biobanks <- biobanks[, (names(biobanks) != 'URL')]
 
   observeEvent(input$confirm0, {
     
@@ -263,13 +252,12 @@ server <- function(input, output, session) {
       data <- data[tolower(data$Resource.Type) == tolower(input$resource_type),]
     }
 
-    colnames(data) <- c("Name","URL","Resource Type","Description","Data Type",
-                         "NIH Funded","Notes")
+    colnames(data) <- c("Name","Resource Type","Description","Notes")
     data
     
   },  filter = "top", escape = FALSE, rownames = FALSE, options = list(scrollX = TRUE, pageLength = 30), callback = JS("
 var tips = ['Resource name (long name and acronym if any)', 'Web URL', 'Resource type (Data/Computational/Supporting)', 'About the resource',
-'E.g. genomics or clinical studies (for data resources)','Project funded by the NIH?','Additional notes',
+'E.g. genomics or clinical studies (for data resources)','Additional notes',
 'Phenotypic data type (e.g., electronic health records -EHR-, questionnaires, clinical notes)'],
     header = table.columns().header();
 for (var i = 0; i < tips.length; i++) {

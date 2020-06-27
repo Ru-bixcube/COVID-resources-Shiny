@@ -1,31 +1,28 @@
-# GenoPheno-CatalogShiny
+# COVID-resources-Shiny
 
-`GenoPheno-CatalogShiny` is an R Shiny App developed to provide a dynamic on-line catalog with datasets containing both, genomic sequencing and clinical data for the same patients. 
+`COVID-resources-Shiny` is an R Shiny App developed to provide a dynamic on-line catalog with datasets containing both, genomic sequencing and clinical data for the same patients.
 
 ## What is this repository for?
 
-The `GenoPheno-CatalogShiny` is a dynamic catalog that puts together a descriptive and informative summary of datasets with genomic and phenotypic data, to help investigators to identify resources for their research. The table provides information of the country where the data was collected, the number of patients for each dataset, the number of samples collected, the type of phenotypic data (electronic health records -EHR-, questionnaires, clinical notes), the type of genomic data (at least one of the following types of Next Generation Sequencing -NGS-: whole genome sequencing -WGS-, whole exome sequencing data -WES-) and the disease focus (general or disease specific). Filtering and searching features are available. Users can submit new entries via the Shiny App and also correct the existing ones via this repository (See details below). 
+The `COVID-resources-Shiny` is a dynamic catalog that puts together a descriptive summary of open source and publicly available data and informatic resources relevant to the COVID-19 pandemic, to help investigators to identify resources for their research. The table provides the name, url, description and type of each resource. Filtering and searching features are available. Users can submit new entries via the [submission form](https://forms.gle/CpzGm51PqoKG7Y8u9) and also correct the existing ones via this repository (See details below).
 
 ## Inclusion criteria
 This catalog only includes those data repositories that comply with the following:
-1. Over 500 human subjects
-2. Contain both genotype and phenotype data for **the same subjects**
-3. Include WGS and/or WES data as part of the genomic data content
-4. Include at least 100 recorded phenotypic variables per subject
-5. The dataset has to be accessible through a website or by collaboration with investigators
-6. All the resources (data and website) have to be available in English
+1. Restricted to datasets, software, and related informatics resources relevant to the COVID-19 pandemic
+2. The resource must be open source and/or publicly accessible (free of charge) through a website or via a way of collaboration with investigators
+3. All the resources (data and website) have to be available in English
 
-All five criteria must be met for a dataset to be considered. 
+All three criteria must be met for a dataset to be considered.
 
-## On line
-The on line version of the GenoPheno-CatalogShiny Shiny App is available at: 
+## Online
+The online version of the COVID-resources-Shiny Shiny App is available at:
 
-<a href="https://avillachlab.shinyapps.io/genophenocatalog" target="_blank">https://avillachlab.shinyapps.io/genophenocatalog</a>
+https://tyleryasaka.shinyapps.io/covid-resources-shiny
 
 
 ## Submitting a new entry
 
-Go to the [GenoPheno-CatalogShiny website](https://avillachlab.shinyapps.io/genophenocatalog) and click on the "Submit a new dataset" tab at the top of the table. Fill the form accordingly (fields marked with `*` are mandatory) and click the `Submit` button. The new entry submitted has to fulfill the inclusion criteria described above. All new submissions will be validated before being added to the table. 
+Go to the [submission form](https://forms.gle/CpzGm51PqoKG7Y8u9), fill the form accordingly, and submit. The new entry submitted has to fulfill the inclusion criteria described above. All new submissions will be validated before being added to the table.
 
 ## Correcting an existing entry
 
@@ -41,5 +38,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-## Citation 
